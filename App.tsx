@@ -23,7 +23,7 @@ export default function App() {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const bleManager = useMemo(() => new BleManager(), []);
-
+  const UUID = '00001101-0000-1000-8000-00805F9B34FB'
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
@@ -133,15 +133,17 @@ export default function App() {
     try {
       const deviceConnection = await bleManager.connectToDevice(device.id, { refreshGatt: 'OnConnected' });     
       // await bleManager.discoverAllServicesAndCharacteristicsForDevice(device.id);
-      // const services = await device.services()
-      // console.log(services);  
+      const services = await device.services()
+      console.log(services);  
+      // const characteristics = await deviceConnection.isConnected();
+      // console.log(characteristics)
       // await bleManager.discoverAllServicesAndCharacteristicsForDevice(device.id)
       // .then((results) => { 
       //   console.log(results);       
       // });
       // bleManager.stopDeviceScan(); 
       // console.log(deviceConnection) 
-      const  service = await device.characteristicsForService('0000fee0-0000-1000-8000-00805f9b34fb')  
+      const  service = await device.characteristicsForService(UUID)  
       console.log(service)   
       setConnectedDevice(deviceConnection);
       console.log('conectado !!!!')  
@@ -153,8 +155,8 @@ export default function App() {
   const imprima = async () => {
     if (connectedDevice){
        await connectedDevice.writeCharacteristicWithResponseForService(        
-        '0000ffe0-0000-1000-8000-00805f9b34fb',
-        'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+        UUID,
+        UUID,
         data
       )   
     }
